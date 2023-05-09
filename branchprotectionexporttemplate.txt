@@ -1,0 +1,9 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: branch_protection_$reponame
+description: Branch protection policy for the $reponame repository
+resource: repository
+configuration:
+  branchProtectionRules:
+
