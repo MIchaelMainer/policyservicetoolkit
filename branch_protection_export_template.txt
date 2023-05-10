@@ -1,0 +1,10 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: $reponame-branch-protection
+description: Branch protection policy for the $reponame repository
+resource: repository
+configuration:
+  branchProtectionRules:
+
+  # The following GitHub PolicyService properties are not supported: whoCanDismissReviews and whoCanPush
