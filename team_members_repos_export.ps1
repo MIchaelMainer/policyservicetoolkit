@@ -27,6 +27,7 @@ query {
                   name
                   login
                 }
+                role
               }
             }
             repositories {
@@ -56,7 +57,7 @@ $edges | ForEach-Object {
   $_.node.members.edges | ForEach-Object {
     if ($_.node.login)
     {
-      [void]$sb.Append("`t$($_.node.login.ToString())")
+      [void]$sb.Append("`t$($_.node.login.ToString()) ($($_.role.ToString()))")
     }
     if ($_.node.name)
     {
