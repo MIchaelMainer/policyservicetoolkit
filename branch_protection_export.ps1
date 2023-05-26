@@ -102,7 +102,7 @@ $nodes | ForEach-Object {
     # [void]$sb.AppendLine("    requiresPullRequestBeforeMerging: $($_.requiresPullRequestBeforeMerging.ToString().ToLower())")
 
     [void]$sb.AppendLine("    # Requires requiresStrictStatusChecks. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
-    [void]$sb.AppendLine("    requiresStatusChecks: $($_.requiresStatusChecks.ToString().ToLower())")
+    [void]$sb.AppendLine("    requiredStatusChecks: $($_.requiresStatusChecks.ToString().ToLower())")
 
     if ($_.requiresStatusChecks -eq $true) {
         [void]$sb.AppendLine("    # Requires requiresStrictStatusChecks. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
