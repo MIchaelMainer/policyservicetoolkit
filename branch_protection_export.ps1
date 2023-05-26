@@ -82,9 +82,6 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    # Specifies whether admins can overwrite branch protection. boolean")
     [void]$sb.AppendLine("    isAdminEnforced: $($_.isAdminEnforced.ToString().ToLower())")
 
-    [void]$sb.AppendLine("    # Specifies whether approving reviews are required to update matching branches. boolean")
-    [void]$sb.AppendLine("    requiresApprovingReviews: $($_.requiresApprovingReviews.ToString().ToLower())")
-
     [void]$sb.AppendLine("    # Specifies the number of pull request reviews before merging. int (0-6)")
     [void]$sb.AppendLine("    requiredApprovingReviewsCount: $($_.requiredApprovingReviewCount.ToString())")
 
