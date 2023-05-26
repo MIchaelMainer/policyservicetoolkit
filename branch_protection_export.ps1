@@ -101,12 +101,12 @@ $nodes | ForEach-Object {
     # [void]$sb.AppendLine("    # I'm not seeing this in the docs https://docs.github.com/en/graphql/reference/objects#branchprotectionrule")
     # [void]$sb.AppendLine("    requiresPullRequestBeforeMerging: $($_.requiresPullRequestBeforeMerging.ToString().ToLower())")
 
-    [void]$sb.AppendLine("    # Requires requiresStrictStatusChecks. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
-    [void]$sb.AppendLine("    requiredStatusChecks: $($_.requiresStatusChecks.ToString().ToLower())")
+    # [void]$sb.AppendLine("    # Requires requiresStrictStatusChecks. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
+    # [void]$sb.AppendLine("    requiredStatusChecks: $($_.requiresStatusChecks.ToString().ToLower())")
 
     if ($_.requiresStatusChecks -eq $true) {
         [void]$sb.AppendLine("    # Requires requiresStrictStatusChecks. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
-        [void]$sb.AppendLine("    requiredStatusCheckContexts:")
+        [void]$sb.AppendLine("    requiredStatusChecks:")
         $_.requiredStatusCheckContexts | ForEach-Object {
             [void]$sb.AppendLine("    - $($_.ToString())")
         }
