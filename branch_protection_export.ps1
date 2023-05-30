@@ -43,6 +43,7 @@ $JsonContent = & "gh" api graphql -F owner="$repoowner" -F name="$reponame" -f q
                 requiredApprovingReviewCount
                 requiresCodeOwnerReviews
                 requiresCommitSignatures
+                requiresConversationResolution
                 requiresLinearHistory
                 requiresStatusChecks
                 requiredStatusCheckContexts
@@ -88,21 +89,14 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    # Require review from Code Owners. Requires requiredApprovingReviewsCount. boolean")
     [void]$sb.AppendLine("    requireCodeOwnersReview: $($_.requiresCodeOwnerReviews.ToString().ToLower())")
 
-    [void]$sb.AppendLine("    # Are commits required to be signed. boolean")
+    [void]$sb.AppendLine("    # Are commits required to be signed. boolean. TODO: all contributors must have commit signing on local machines.")
     [void]$sb.AppendLine("    requiresCommitSignatures: $($_.requiresCommitSignatures.ToString().ToLower())")
 
-    # $requiresConversationResolution = $_.requiresConversationResolution ? "" : $_.requiresConversationResolution.ToString().ToLower()
-    # [void]$sb.AppendLine("    # Are conversations required to be resolved before merging.")
-    # [void]$sb.AppendLine("    requiresConversationResolution: $requiresConversationResolution")
+    [void]$sb.AppendLine("    # Are conversations required to be resolved before merging? boolean")
+    [void]$sb.AppendLine("    requiresConversationResolution: $($_.requiresConversationResolution.ToString().ToLower())")
 
     [void]$sb.AppendLine("    # Are merge commits prohibited from being pushed to this branch. boolean")
     [void]$sb.AppendLine("    requiresLinearHistory: $($_.requiresLinearHistory.ToString().ToLower())")
-
-    # [void]$sb.AppendLine("    # I'm not seeing this in the docs https://docs.github.com/en/graphql/reference/objects#branchprotectionrule")
-    # [void]$sb.AppendLine("    requiresPullRequestBeforeMerging: $($_.requiresPullRequestBeforeMerging.ToString().ToLower())")
-
-    # [void]$sb.AppendLine("    # Requires requiresStrictStatusChecks. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
-    # [void]$sb.AppendLine("    requiredStatusChecks: $($_.requiresStatusChecks.ToString().ToLower())")
 
     if ($_.requiresStatusChecks -eq $true) {
         [void]$sb.AppendLine("    # Requires requiresStrictStatusChecks. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
