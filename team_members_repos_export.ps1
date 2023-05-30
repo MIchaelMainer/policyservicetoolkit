@@ -1,17 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-
-
-
-
-
-
-
-
-
-
-
 # GraphQL query to get the branch protection rules
 # https://docs.github.com/en/graphql/reference/objects#branchprotectionrule
 $JsonContent = & "gh" api graphql -f query='
@@ -47,7 +36,6 @@ query {
 
 $json_object = ($JsonContent | ConvertFrom-Json)
 $edges = $json_object.data.organization.teams.edges
-
 
 $sb = [System.Text.StringBuilder]::new()
 
