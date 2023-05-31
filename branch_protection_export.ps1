@@ -132,14 +132,14 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    requiresLinearHistory: $($_.requiresLinearHistory.ToString().ToLower())")
 
     if ($_.requiresStatusChecks -eq $true) {
-        [void]$sb.AppendLine("    # Requires requiresStrictStatusChecks. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
+        [void]$sb.AppendLine("    # Required status checks to pass before merging. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
         [void]$sb.AppendLine("    requiredStatusChecks:")
         $_.requiredStatusCheckContexts | ForEach-Object {
             [void]$sb.AppendLine("    - $($_.ToString())")
         }
     }
 
-    [void]$sb.AppendLine("    # The docs conflict. Are branches required to be up to date before merging. Or Require status checks to pass before merging")
+    [void]$sb.AppendLine("    # Require branches to be up to date before merging. 	Requires requiredStatusChecks. boolean")
     [void]$sb.AppendLine("    requiresStrictStatusChecks: $($_.requiresStrictStatusChecks.ToString().ToLower())")
 
     [void]$sb.AppendLine("    # Indicates whether there are restrictions on who can push. boolean. Requires whoCanPush.")
