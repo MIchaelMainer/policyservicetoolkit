@@ -24,7 +24,7 @@ $reponame = $reponame
 
 # GraphQL query to get the branch protection rules
 # https://docs.github.com/en/graphql/reference/objects#branchprotectionrule
-$JsonContent = & "gh" api graphql -F owner="$repoowner" -F name="$reponame" -f query='
+$JsonContent = & "gh" api graphql -H 'X-Github-Next-Global-ID: 1' -F owner="$repoowner" -F name="$reponame" -f query='
     query($name: String!, $owner: String!) {
         repository(owner: $owner, name: $name) {
             branchProtectionRules(first: 100) {
