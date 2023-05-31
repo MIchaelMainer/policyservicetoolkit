@@ -99,7 +99,7 @@ $nodes | ForEach-Object {
         }
     }
     else {
-        [void]$sb.AppendLine("    # This branch pattern does not apply to any currently existant branches.")
+        [void]$sb.AppendLine("    # This branch pattern does not apply to any currently existent branches.")
     }
 
     [void]$sb.AppendLine("`n    # Specifies whether this branch can be deleted. boolean")
