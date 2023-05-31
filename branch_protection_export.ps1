@@ -92,12 +92,17 @@ $nodes | ForEach-Object {
 
     [void]$sb.AppendLine("  - branchNamePattern: $($_.pattern.ToString())")
 
-    [void]$sb.AppendLine("    # This branch pattern applies to the following branches:")
-    $_.matchingRefs.nodes | ForEach-Object {
-        [void]$sb.AppendLine("    # $($_.name.ToString())")
+    if ($_.matchingRefs.nodes.count -gt 0) {
+        [void]$sb.AppendLine("    # This branch pattern applies to the following branches:")
+        $_.matchingRefs.nodes | ForEach-Object {
+            [void]$sb.AppendLine("    # $($_.name.ToString())")
+        }
+    }
+    else {
+        [void]$sb.AppendLine("    # This branch pattern does not apply to any currently existant branches.")
     }
 
-    [void]$sb.AppendLine("    # Specifies whether this branch can be deleted. boolean")
+    [void]$sb.AppendLine("`n    # Specifies whether this branch can be deleted. boolean")
     [void]$sb.AppendLine("    allowsDeletions: $($_.allowsDeletions.ToString().ToLower())")
 
     [void]$sb.AppendLine("    # Specifies whether forced pushes are allowed on this branch. boolean")
@@ -109,8 +114,10 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    # Specifies whether admins can overwrite branch protection. boolean")
     [void]$sb.AppendLine("    isAdminEnforced: $($_.isAdminEnforced.ToString().ToLower())")
 
-    [void]$sb.AppendLine("    # Specifies the number of pull request reviews before merging. int (0-6)")
-    [void]$sb.AppendLine("    requiredApprovingReviewsCount: $($_.requiredApprovingReviewCount.ToString())")
+    if ($_.requiredApprovingReviewCount -ne $null) {
+        [void]$sb.AppendLine("    # Specifies the number of pull request reviews before merging. int (0-6)")
+        [void]$sb.AppendLine("    requiredApprovingReviewsCount: $($_.requiredApprovingReviewCount.ToString())")
+    }
 
     [void]$sb.AppendLine("    # Require review from Code Owners. Requires requiredApprovingReviewsCount. boolean")
     [void]$sb.AppendLine("    requireCodeOwnersReview: $($_.requiresCodeOwnerReviews.ToString().ToLower())")
