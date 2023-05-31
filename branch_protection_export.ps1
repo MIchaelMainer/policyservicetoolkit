@@ -39,6 +39,27 @@ $JsonContent = & "gh" api graphql -F owner="$repoowner" -F name="$reponame" -f q
                 allowsForcePushes
                 dismissesStaleReviews
                 isAdminEnforced
+                pushAllowances(first: 100) {
+                    nodes {
+                      actor {
+                        ... on App {
+                          id
+                          name
+                          slug
+                        }
+                        ... on Team {
+                          id
+                          name
+                          slug
+                        }
+                        ... on User {
+                          id
+                          name
+                          login
+                        }
+                      }
+                    }
+                  }
                 requiresApprovingReviews
                 requiredApprovingReviewCount
                 requiresCodeOwnerReviews
@@ -70,6 +91,11 @@ $sb = [System.Text.StringBuilder]::new($branch_protection_policy_file_contents)
 $nodes | ForEach-Object {
 
     [void]$sb.AppendLine("  - branchNamePattern: $($_.pattern.ToString())")
+
+    [void]$sb.AppendLine("    # This branch pattern applies to the following branches:")
+    $_.matchingRefs.nodes | ForEach-Object {
+        [void]$sb.AppendLine("    # $($_.name.ToString())")
+    }
 
     [void]$sb.AppendLine("    # Specifies whether this branch can be deleted. boolean")
     [void]$sb.AppendLine("    allowsDeletions: $($_.allowsDeletions.ToString().ToLower())")
@@ -109,8 +135,21 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    # The docs conflict. Are branches required to be up to date before merging. Or Require status checks to pass before merging")
     [void]$sb.AppendLine("    requiresStrictStatusChecks: $($_.requiresStrictStatusChecks.ToString().ToLower())")
 
-    [void]$sb.AppendLine("    # Restrict who can push to matching branches")
+    [void]$sb.AppendLine("    # Indicates whether there are restrictions on who can push. boolean. Requires whoCanPush.")
     [void]$sb.AppendLine("    restrictsPushes: $($_.restrictsPushes.ToString().ToLower())")
+
+    if ($_.restrictsPushes.ToString().ToLower() -eq "true") {
+        [void]$sb.AppendLine("    # List of Apps, Users, and Teams that can push to this branch.")
+        [void]$sb.AppendLine("    whoCanPush:")
+        $_.pushAllowances.nodes | ForEach-Object {
+            if ($_.actor.login -ne $null) {
+                [void]$sb.AppendLine("    - $($_.actor.login.ToString())")
+            }
+            elseif ($_.actor.slug -ne $null)  {
+                [void]$sb.AppendLine("    - $($_.actor.slug.ToString())")
+            }
+        }
+    }
 
     [void]$sb.AppendLine("    # Restrict who can dismiss pull request reviews")
     [void]$sb.AppendLine("    restrictsReviewDismissals: $($_.restrictsReviewDismissals.ToString().ToLower())`n")
