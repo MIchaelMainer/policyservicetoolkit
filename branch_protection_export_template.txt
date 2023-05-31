@@ -9,4 +9,4 @@ resource: repository
 configuration:
   branchProtectionRules:
 
-  # The following GitHub PolicyService properties are not supported: whoCanDismissReviews and whoCanPush
+  # The following GitHub PolicyService properties are not yet supported: whoCanDismissReviews
