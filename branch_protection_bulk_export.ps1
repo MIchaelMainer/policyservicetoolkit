@@ -12,19 +12,28 @@
 #   Specifies the organization owner of the repos. This is the organization name, not the organization ID.
 #.Parameter reponame
 #   Specifies the path to a file that contains the names of the repositories to export. Each repository name should be on a separate line.
+#.Parameter -outputdirectory
+#   Specifies the path to a directory where the generated policy files are created.
 #>
 
 Param(
     [parameter(Mandatory = $true)] [String] $repoowner,
-    [parameter(Mandatory = $true)] [String] $filepath
+    [parameter(Mandatory = $true)] [String] $filepath,
+    [parameter(Mandatory = $false)] [String] $outputdirectory = "."
 )
 
 if (!(Test-Path $filepath -PathType Leaf -IsValid)) {
-    Write-Error "The file path is invalid."
+    Write-Error "The path $filepath is invalid."
+    exit 1
+}
+
+if (!(Test-Path $outputdirectory -PathType Leaf -IsValid)) {
+    Write-Error "The path $outputdirectory is invalid."
     exit 1
 }
 
 foreach($repo in [System.IO.File]::ReadLines($filepath))
 {
-    & .\branch_protection_export.ps1 -repoowner $repoowner -reponame $repo
+    & .\branch_protection_export.ps1 -repoowner $repoowner -reponame $repo -outputdirectory $outputdirectory
+    Write-Host "Exported branch protection rules for $repo"
 }

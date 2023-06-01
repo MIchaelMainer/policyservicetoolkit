@@ -12,12 +12,27 @@
 #   Specifies the organization owner of the repo."
 #.Parameter reponame
 #   Specifies the repo to target.
+#.Parameter -outputdirectory
+#   Specifies the path to a directory where the generated policy file is created.
 #>
 
 Param(
     [parameter(Mandatory = $true)] [String] $repoowner,
-    [parameter(Mandatory = $true)] [String] $reponame
+    [parameter(Mandatory = $true)] [String] $reponame,
+    [parameter(Mandatory = $false)] [String] $outputdirectory = "."
 )
+
+# Check whether the output directory exists
+if (!(Test-Path $outputdirectory -PathType Container)) {
+    #Check whether the syntax is valid.
+    if (Test-Path $outputdirectory -PathType Container -IsValid) {
+        # Create the output directory
+        New-Item -Path $outputdirectory -ItemType Directory -Force | Out-Null
+    } else {
+        Write-Error "The `$outputdirectory path is invalid syntax."
+        exit 1
+    }
+}
 
 # Setting local variable so that it can be injected into the template
 $reponame = $reponame
@@ -78,9 +93,8 @@ $JsonContent = & "gh" api graphql -H 'X-Github-Next-Global-ID: 1' -F owner="$rep
 '
 
 $json_object = ($JsonContent | ConvertFrom-Json)
-$nodes = $json_object.data.repository.branchProtectionRules.nodes #| ForEach-Object $_.PsObject.Properties.Pattern
+$nodes = $json_object.data.repository.branchProtectionRules.nodes
 
-$outputfilename = ".\$reponame-branch-protection.yml"
 $branch_protection_template = Get-Content '.\branch_protection_export_template.txt' -Raw
 
 # Injects locally defined variables into the template
@@ -114,8 +128,11 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    # Specifies whether admins can overwrite branch protection. boolean")
     [void]$sb.AppendLine("    isAdminEnforced: $($_.isAdminEnforced.ToString().ToLower())")
 
+    [void]$sb.AppendLine("    # Indicates whether `"Require a pull request before merging`" is enabled. boolean")
+    [void]$sb.AppendLine("    requiresPullRequestBeforeMerging: $($_.requiresApprovingReviews.ToString().ToLower())")
+
     if ($_.requiredApprovingReviewCount -ne $null) {
-        [void]$sb.AppendLine("    # Specifies the number of pull request reviews before merging. int (0-6)")
+        [void]$sb.AppendLine("    # Specifies the number of pull request reviews before merging. int (0-6). Should be null/empty if PRs are not required")
         [void]$sb.AppendLine("    requiredApprovingReviewsCount: $($_.requiredApprovingReviewCount.ToString())")
     }
 
@@ -162,4 +179,7 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    restrictsReviewDismissals: $($_.restrictsReviewDismissals.ToString().ToLower())`n")
 }
 
-Out-File -FilePath $outputfilename -InputObject $sb.ToString()
+$outputfilename = ".\$reponame-branch-protection.yml"
+$filepath = Join-Path -Path $outputdirectory -ChildPath $outputfilename
+
+Out-File -FilePath $filepath -InputObject $sb.ToString()
