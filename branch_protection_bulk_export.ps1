@@ -10,7 +10,7 @@
 #
 #.Parameter repoowner
 #   Specifies the organization owner of the repos. This is the organization name, not the organization ID.
-#.Parameter reponame
+#.Parameter filepath
 #   Specifies the path to a file that contains the names of the repositories to export. Each repository name should be on a separate line.
 #.Parameter -outputdirectory
 #   Specifies the path to a directory where the generated policy files are created.

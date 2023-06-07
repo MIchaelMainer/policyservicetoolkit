@@ -53,6 +53,27 @@ $JsonContent = & "gh" api graphql -H 'X-Github-Next-Global-ID: 1' -F owner="$rep
                 allowsDeletions
                 allowsForcePushes
                 dismissesStaleReviews
+                reviewDismissalAllowances(first: 100) {
+                    nodes {
+                        actor {
+                        ... on App {
+                          id
+                          name
+                          slug
+                        }
+                        ... on Team {
+                          id
+                          name
+                          slug
+                        }
+                        ... on User {
+                          id
+                          name
+                          login
+                        }
+                      }
+                    }
+                  }
                 isAdminEnforced
                 pushAllowances(first: 100) {
                     nodes {
@@ -104,16 +125,16 @@ $sb = [System.Text.StringBuilder]::new($branch_protection_policy_file_contents)
 
 $nodes | ForEach-Object {
 
-    [void]$sb.AppendLine("  - branchNamePattern: $($_.pattern.ToString())")
+    [void]$sb.AppendLine("`n  - branchNamePattern: $($_.pattern.ToString())")
 
     if ($_.matchingRefs.nodes.count -gt 0) {
-        [void]$sb.AppendLine("    # This branch pattern applies to the following branches:")
+        [void]$sb.AppendLine("    # This branch pattern applies to the following branches as of $(Get-Date):")
         $_.matchingRefs.nodes | ForEach-Object {
             [void]$sb.AppendLine("    # $($_.name.ToString())")
         }
     }
     else {
-        [void]$sb.AppendLine("    # This branch pattern does not apply to any currently existent branches.")
+        [void]$sb.AppendLine("    # This branch pattern does not apply to any currently existent branches as of $(Get-Date).")
     }
 
     [void]$sb.AppendLine("`n    # Specifies whether this branch can be deleted. boolean")
@@ -128,8 +149,11 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    # Specifies whether admins can overwrite branch protection. boolean")
     [void]$sb.AppendLine("    isAdminEnforced: $($_.isAdminEnforced.ToString().ToLower())")
 
-    [void]$sb.AppendLine("    # Indicates whether `"Require a pull request before merging`" is enabled. boolean")
-    [void]$sb.AppendLine("    requiresPullRequestBeforeMerging: $($_.requiresApprovingReviews.ToString().ToLower())")
+    # https://stackoverflow.com/questions/76384359/github-graphql-api-branch-protection-rule-how-do-i-get-require-a-pull-reque
+    if (($_.requiredApprovingReviewCount -ne $null) -and ($_.requiresApprovingReviews.ToString().ToLower() -eq "true")) {
+        [void]$sb.AppendLine("    # Indicates whether `"Require a pull request before merging`" is enabled. boolean")
+        [void]$sb.AppendLine("    requiresPullRequestBeforeMerging: $($_.requiresApprovingReviews.ToString().ToLower())")
+    }
 
     if ($_.requiredApprovingReviewCount -ne $null) {
         [void]$sb.AppendLine("    # Specifies the number of pull request reviews before merging. int (0-6). Should be null/empty if PRs are not required")
@@ -175,8 +199,21 @@ $nodes | ForEach-Object {
         }
     }
 
-    [void]$sb.AppendLine("    # Restrict who can dismiss pull request reviews")
-    [void]$sb.AppendLine("    restrictsReviewDismissals: $($_.restrictsReviewDismissals.ToString().ToLower())`n")
+    [void]$sb.AppendLine("    # Restrict who can dismiss pull request reviews. boolen")
+    [void]$sb.AppendLine("    restrictsReviewDismissals: $($_.restrictsReviewDismissals.ToString().ToLower())")
+
+    if (($_.restrictsReviewDismissals.ToString().ToLower() -eq "true") -and ($_.reviewDismissalAllowances.nodes.Count -gt 0)) {
+        [void]$sb.AppendLine("    # List of Apps, Users, and Teams that can dismiss pull request reviews to this branch pattern.")
+        [void]$sb.AppendLine("    whoCanDismissReviews:")
+        $_.reviewDismissalAllowances.nodes | ForEach-Object {
+            if ($_.actor.login -ne $null) {
+                [void]$sb.AppendLine("    - $($_.actor.login.ToString())")
+            }
+            elseif ($_.actor.slug -ne $null)  {
+                [void]$sb.AppendLine("    - $($_.actor.slug.ToString())")
+            }
+        }
+    }
 }
 
 $outputfilename = ".\$reponame-branch-protection.yml"

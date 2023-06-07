@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run: Branch Protection Export for microsoft-graph-devx-api",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "./branch_protection_export.ps1",
+            "args": ["microsoftgraph", "microsoft-graph-devx-api"]
+        },
+        {
+            "name": "Run: Bulk Branch Protection Export for Microsoft Graph",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "./branch_protection_bulk_export.ps1",
+            "args": ["microsoftgraph", "./repos.txt", "c:/repos/temp"]
+        }
+    ]
+}
