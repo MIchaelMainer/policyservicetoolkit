@@ -199,7 +199,7 @@ $nodes | ForEach-Object {
         }
     }
 
-    [void]$sb.AppendLine("    # Restrict who can dismiss pull request reviews. boolen")
+    [void]$sb.AppendLine("    # Restrict who can dismiss pull request reviews. boolean")
     [void]$sb.AppendLine("    restrictsReviewDismissals: $($_.restrictsReviewDismissals.ToString().ToLower())")
 
     if (($_.restrictsReviewDismissals.ToString().ToLower() -eq "true") -and ($_.reviewDismissalAllowances.nodes.Count -gt 0)) {
