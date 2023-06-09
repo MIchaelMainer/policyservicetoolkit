@@ -183,10 +183,10 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    # Require branches to be up to date before merging. Requires requiredStatusChecks. boolean")
     [void]$sb.AppendLine("    requiresStrictStatusChecks: $($_.requiresStrictStatusChecks.ToString().ToLower())")
 
-    [void]$sb.AppendLine("    # Indicates whether there are restrictions on who can push. boolean. Requires whoCanPush.")
+    [void]$sb.AppendLine("    # Indicates whether there are restrictions on who can push. boolean. Should be set with whoCanPush.")
     [void]$sb.AppendLine("    restrictsPushes: $($_.restrictsPushes.ToString().ToLower())")
 
-    if ($_.restrictsPushes.ToString().ToLower() -eq "true") {
+    if (($_.restrictsPushes.ToString().ToLower() -eq "true") -and ($_.pushAllowances.nodes.Count -gt 0)) {
         [void]$sb.AppendLine("    # List of Apps, Users, and Teams that can push to this branch.")
         [void]$sb.AppendLine("    whoCanPush:")
         $_.pushAllowances.nodes | ForEach-Object {
