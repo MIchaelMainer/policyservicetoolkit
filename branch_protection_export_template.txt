@@ -8,5 +8,3 @@ description: Branch protection policy for the $reponame repository
 resource: repository
 configuration:
   branchProtectionRules:
-
-  # The following GitHub PolicyService properties are not yet supported: whoCanDismissReviews
