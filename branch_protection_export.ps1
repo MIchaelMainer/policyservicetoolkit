@@ -172,7 +172,7 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    # Are merge commits prohibited from being pushed to this branch. boolean")
     [void]$sb.AppendLine("    requiresLinearHistory: $($_.requiresLinearHistory.ToString().ToLower())")
 
-    if (($_.requiresStatusChecks -eq $true) -and ($_.requiredStatusCheckContexts.nodes.Count -gt 0)) {
+    if ($_.requiresStatusChecks -eq $true) {
         [void]$sb.AppendLine("    # Required status checks to pass before merging. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
         [void]$sb.AppendLine("    requiredStatusChecks:")
         $_.requiredStatusCheckContexts | ForEach-Object {
