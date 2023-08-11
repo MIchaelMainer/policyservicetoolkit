@@ -176,7 +176,7 @@ $nodes | ForEach-Object {
         [void]$sb.AppendLine("      # Required status checks to pass before merging. Values can be any string, but if the value does not correspond to any existing status check, the status check will be stuck on pending for status since nothing exists to push an actual status")
         [void]$sb.AppendLine("      requiredStatusChecks:")
         $_.requiredStatusCheckContexts | ForEach-Object {
-            [void]$sb.AppendLine("    - $($_.ToString())")
+            [void]$sb.AppendLine("      - $($_.ToString())")
         }
     }
 
@@ -200,7 +200,7 @@ $nodes | ForEach-Object {
     }
 
     [void]$sb.AppendLine("      # Restrict who can dismiss pull request reviews. boolean")
-    [void]$sb.AppendLine("    restrictsReviewDismissals: $($_.restrictsReviewDismissals.ToString().ToLower())")
+    [void]$sb.AppendLine("      restrictsReviewDismissals: $($_.restrictsReviewDismissals.ToString().ToLower())")
 
     if (($_.restrictsReviewDismissals.ToString().ToLower() -eq "true") -and ($_.reviewDismissalAllowances.nodes.Count -gt 0)) {
         [void]$sb.AppendLine("      # List of Apps, Users, and Teams that can dismiss pull request reviews to this branch pattern.")
