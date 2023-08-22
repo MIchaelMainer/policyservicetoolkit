@@ -6,17 +6,20 @@
 #   Exports the branch protection rules as a policy service yaml file
 #
 #.Description
-#   This script uses the GitHub CLI. You should sign in with the CLI before running this script.
+#   This script uses the GitHub CLI and that you have owner access to the repo. You should sign in with the CLI before running this script.
 #
 #.Parameter repoowner
 #   Specifies the organization owner of the repo."
 #.Parameter reponame
 #   Specifies the repo to target.
+#.Parameter outputFilePath
+#   Specifies the output branch protection rule file location. Defaults to the current directory if not specified.
 #>
 
 Param(
     [parameter(Mandatory = $true)] [String] $repoowner,
-    [parameter(Mandatory = $true)] [String] $reponame
+    [parameter(Mandatory = $true)] [String] $reponame,
+    [parameter(Mandatory = $false)] [String] $outputFilePath = $PWD
 )
 
 # Setting local variable so that it can be injected into the template
@@ -56,14 +59,20 @@ $JsonContent = & "gh" api graphql -F owner="$repoowner" -F name="$reponame" -f q
 '
 
 $json_object = ($JsonContent | ConvertFrom-Json)
-$nodes = $json_object.data.repository.branchProtectionRules.nodes #| ForEach-Object $_.PsObject.Properties.Pattern
+$nodes = $json_object.data.repository.branchProtectionRules.nodes
 
 $outputfilename = ".\$reponame-branch-protection.yml"
+
+if ($outputFilePath -ne $null) {
+    $outputfilename = Join-Path -Path $outputFilePath -ChildPath $outputfilename
+}
+
 $branch_protection_template = Get-Content '.\branch_protection_export_template.txt' -Raw
 
 # Injects locally defined variables into the template
 $branch_protection_policy_file_contents = Invoke-Expression "@`"`r`n$branch_protection_template`r`n`"@"
 
+# Build the branch protection policy file configuration.
 $sb = [System.Text.StringBuilder]::new($branch_protection_policy_file_contents)
 
 $nodes | ForEach-Object {
@@ -82,8 +91,9 @@ $nodes | ForEach-Object {
     [void]$sb.AppendLine("    # Specifies whether admins can overwrite branch protection. boolean")
     [void]$sb.AppendLine("    isAdminEnforced: $($_.isAdminEnforced.ToString().ToLower())")
 
-    [void]$sb.AppendLine("    # Specifies whether approving reviews are required to update matching branches. boolean")
-    [void]$sb.AppendLine("    requiresApprovingReviews: $($_.requiresApprovingReviews.ToString().ToLower())")
+    # Not used in the policy service
+    # [void]$sb.AppendLine("    # Specifies whether approving reviews are required to update matching branches. boolean")
+    # [void]$sb.AppendLine("    requiresApprovingReviews: $($_.requiresApprovingReviews.ToString().ToLower())")
 
     [void]$sb.AppendLine("    # Specifies the number of pull request reviews before merging. int (0-6)")
     [void]$sb.AppendLine("    requiredApprovingReviewsCount: $($_.requiredApprovingReviewCount.ToString())")
