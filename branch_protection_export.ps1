@@ -123,7 +123,9 @@ $branch_protection_policy_file_contents = Invoke-Expression "@`"`r`n$branch_prot
 
 $sb = [System.Text.StringBuilder]::new($branch_protection_policy_file_contents)
 
-$nodes | ForEach-Object {
+$sorted_nodes = $nodes | Sort-Object -Property pattern
+
+$sorted_nodes | ForEach-Object {
 
     [void]$sb.AppendLine("`n    - branchNamePattern: $($_.pattern.ToString())")
 
