@@ -130,7 +130,7 @@ $sorted_nodes | ForEach-Object {
     [void]$sb.AppendLine("`n    - branchNamePattern: $($_.pattern.ToString())")
 
     if ($_.matchingRefs.nodes.count -gt 0) {
-        [void]$sb.AppendLine("      # This branch pattern applies to the following branches as of $(Get-Date):")
+        [void]$sb.AppendLine("      # This branch pattern applies to the following branches as of approximately $(Get-Date):")
         $_.matchingRefs.nodes | ForEach-Object {
             [void]$sb.AppendLine("      # $($_.name.ToString())")
         }
