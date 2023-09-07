@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 # GraphQL query to get the team members in the the microsoftgraph GitHub organization.
+# This script assumes that you are signed in to the GitHub CLI and that you have a valid token.
 $JsonContent = & "gh" api graphql -f query='
 query {
     organization(login: "microsoftgraph") {
