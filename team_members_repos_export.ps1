@@ -1,8 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# GraphQL query to get the branch protection rules
-# https://docs.github.com/en/graphql/reference/objects#branchprotectionrule
+# GraphQL query to get the team members in the the microsoftgraph GitHub organization.
 $JsonContent = & "gh" api graphql -f query='
 query {
     organization(login: "microsoftgraph") {
