@@ -23,16 +23,14 @@ foreach($uniqueLabel in $uniqueLabels) {
     if ($commonLabels.Contains($uniqueLabel) -eq $true)
     {
       $labelColorValue = $commonLabels[$uniqueLabel]
-      $color = "--color $labelColorValue"
-      Write-Host "Color: $color"
     }
     else {
-      $color = ""
+      $labelColorValue = ""
     }
 
     Write-Host "Creating label: $uniqueLabel"
 
 
-    gh label create "$uniqueLabel" $color
+    gh label create "$uniqueLabel" --color $labelColorValue --force
   }
 }
