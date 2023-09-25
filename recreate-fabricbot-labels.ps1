@@ -8,6 +8,7 @@
 # List of common labels with their colors. If you a new label here, make sure to add it to the default labels
 # in your GitHub organization so that these are always available for noew repos.
 # Using Kiota labels for references https://github.com/microsoft/kiota/labels
+# Script based on original from Vincent Biret.
 $commonLabels = @{}
 $commonLabels['Needs: Author Feedback'] = 'D8E13E'
 $commonLabels['Needs: Attention :wave:'] = 'ededed'
