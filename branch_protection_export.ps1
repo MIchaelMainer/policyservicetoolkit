@@ -12,14 +12,17 @@
 #   Specifies the organization owner of the repo."
 #.Parameter reponame
 #   Specifies the repo to target.
-#.Parameter -outputdirectory
+#.Parameter outputdirectory
 #   Specifies the path to a directory where the generated policy file is created.
+#.Parameter outputresponse
+#   Switch that indicates whether we should  output the raw json response to the console without writing a branch protection policy file.
 #>
 
 Param(
     [parameter(Mandatory = $true)] [String] $repoowner,
     [parameter(Mandatory = $true)] [String] $reponame,
-    [parameter(Mandatory = $false)] [String] $outputdirectory = "."
+    [parameter(Mandatory = $false)] [String] $outputdirectory = ".",
+    [parameter(Mandatory = $false)] [switch] $outputresponse
 )
 
 # Check whether the output directory exists
@@ -103,6 +106,10 @@ $JsonContent = & "gh" api graphql -H 'X-Github-Next-Global-ID: 1' -F owner="$rep
                 requiresConversationResolution
                 requiresLinearHistory
                 requiresStatusChecks
+                requiredStatusChecks {
+                    context
+
+                }
                 requiredStatusCheckContexts
                 requiresStrictStatusChecks
                 restrictsPushes
@@ -113,10 +120,15 @@ $JsonContent = & "gh" api graphql -H 'X-Github-Next-Global-ID: 1' -F owner="$rep
     }
 '
 
+if ($outputresponse) {
+    Write-Host $JsonContent
+    Exit
+}
+
 $json_object = ($JsonContent | ConvertFrom-Json)
 $nodes = $json_object.data.repository.branchProtectionRules.nodes
 
-$branch_protection_template = Get-Content '.\branch_protection_export_template.txt' -Raw
+$branch_protection_template = Get-Content "$PSScriptRoot\branch_protection_export_template.txt" -Raw
 
 # Injects locally defined variables into the template
 $branch_protection_policy_file_contents = Invoke-Expression "@`"`r`n$branch_protection_template`r`n`"@"
