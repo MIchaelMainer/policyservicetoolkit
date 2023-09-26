@@ -194,7 +194,7 @@ $sorted_nodes | ForEach-Object {
         }
     }
 
-    [void]$sb.AppendLine("      # Require branches to be up to date before merging. Requires requiredStatusChecks. boolean")
+    [void]$sb.AppendLine("      # Require branches to be up to date before merging. boolean")
     [void]$sb.AppendLine("      requiresStrictStatusChecks: $($_.requiresStrictStatusChecks.ToString().ToLower())")
 
     [void]$sb.AppendLine("      # Indicates whether there are restrictions on who can push. boolean. Should be set with whoCanPush.")
