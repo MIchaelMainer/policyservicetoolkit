@@ -9,6 +9,7 @@
 # in your GitHub organization so that these are always available for noew repos.
 # Using Kiota labels for references https://github.com/microsoft/kiota/labels
 # Script based on original from Vincent Biret.
+# Run this script from the repo root. You must have a valid GitHub CLI token.
 $commonLabels = @{}
 $commonLabels['Needs: Author Feedback'] = 'D8E13E'
 $commonLabels['Needs: Attention :wave:'] = 'ededed'
@@ -28,9 +29,6 @@ foreach($uniqueLabel in $uniqueLabels) {
     else {
       $labelColorValue = ""
     }
-
-    Write-Host "Creating label: $uniqueLabel"
-
 
     gh label create "$uniqueLabel" --color $labelColorValue --force
   }
